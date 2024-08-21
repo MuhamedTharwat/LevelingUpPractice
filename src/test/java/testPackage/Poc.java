@@ -1,46 +1,50 @@
 package testPackage;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.edge.EdgeDriver;
 import org.testng.Assert;
-import org.testng.annotations.*;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+import utils.actions.ActionBot;
 
 public class Poc {
     WebDriver driver;
+    ActionBot bot;
 
     @BeforeTest
     public void setUp() {
-        driver = new EdgeDriver();
-        driver.get("https://www.google.com/ncr");
+        bot = new ActionBot(driver);
+        bot.initializeDriver("firefox");
+        bot.navigate("https://www.google.com/ncr");
     }
 
     @Test
     public void verifyPageTitle() {
-        String pageTitle = driver.getTitle();
-        Assert.assertEquals(pageTitle, "Google","title did not match");
+        String pageTitle = bot.getPageTitle();
+        Assert.assertEquals(pageTitle, "Google", "title did not match");
     }
 
     @Test
     public void verifyLogo() {
         By imgElement = By.xpath("//img[@alt='Google']");
-        Assert.assertTrue(driver.findElement(imgElement).isDisplayed(), "logo not displayed");
+        Assert.assertTrue(bot.elementDisplayed(imgElement), "logo not displayed");
 
     }
+
     @Test
-    public void verifySearch(){
-        By searchTxtBox=By.name("q");
-        By firstResult=By.cssSelector("h3");
-        driver.findElement(searchTxtBox).sendKeys("Selenium WebDriver");
-        driver.findElement(searchTxtBox).submit();
-        String firstResultTxt=driver.findElement(firstResult).getText();
-        Assert.assertEquals(firstResultTxt,"WebDriver - Selenium","first result not matched");
+    public void verifySearch() {
+        By searchTxtBox = By.name("q");
+        By fourthResult = By.xpath("(//div[@id='rso']/div/div)[5]//h3");
+        bot.type(searchTxtBox, "testng");
+        bot.submit(searchTxtBox);
+        Assert.assertEquals(bot.getText(fourthResult), "org.testng", "fourth result not matched");
+
     }
 
     @AfterTest
     public void tearDown() {
-        //driver.quit();
+        bot.closeDriver();
     }
 
 
