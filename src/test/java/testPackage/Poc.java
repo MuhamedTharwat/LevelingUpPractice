@@ -3,16 +3,16 @@ package testPackage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 import utils.actions.ActionBot;
 
 public class Poc {
     WebDriver driver;
     ActionBot bot;
-
-    @BeforeTest
+    By imgElement = By.xpath("//img[@alt='Google']");
+    By searchTxtBox = By.name("q");
+    By fourthResult = By.xpath("(//div[@id='rso']/div/div)[5]//h3");
+    @BeforeMethod
     public void setUp() {
         bot = new ActionBot(driver);
         bot.initializeDriver("firefox");
@@ -27,22 +27,19 @@ public class Poc {
 
     @Test
     public void verifyLogo() {
-        By imgElement = By.xpath("//img[@alt='Google']");
         Assert.assertTrue(bot.elementDisplayed(imgElement), "logo not displayed");
 
     }
 
     @Test
     public void verifySearch() {
-        By searchTxtBox = By.name("q");
-        By fourthResult = By.xpath("(//div[@id='rso']/div/div)[5]//h3");
         bot.type(searchTxtBox, "testng");
         bot.submit(searchTxtBox);
         Assert.assertEquals(bot.getText(fourthResult), "org.testng", "fourth result not matched");
 
     }
 
-    @AfterTest
+    @AfterMethod
     public void tearDown() {
         bot.closeDriver();
     }

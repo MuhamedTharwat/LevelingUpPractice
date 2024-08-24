@@ -35,7 +35,7 @@ public class ActionBot {
                 driver = new EdgeDriver();
         }
         driver.manage().window().setPosition(new Point(0, 0));
-        driver.manage().window().setSize(new Dimension(1920, 1080));
+        driver.manage().window().setSize(new Dimension(1280, 720));
         this.wait = createFluentWait(this.driver, 10, 800);
         log.info("Initialized {} browser.", browser);
     }
