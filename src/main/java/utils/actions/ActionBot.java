@@ -12,9 +12,9 @@ import org.openqa.selenium.support.ui.Wait;
 import java.time.Duration;
 
 public class ActionBot {
+    private final static Logger log = LogManager.getLogger(ActionBot.class);
     private WebDriver driver;
     private Wait<WebDriver> wait;
-    private final static Logger log= LogManager.getLogger(ActionBot.class);
 
     public ActionBot(WebDriver driver) {
         this.driver = driver;
@@ -51,8 +51,7 @@ public class ActionBot {
 
     public void type(By locator, String text) {
         try {
-            waitForElement(locator);
-            driver.findElement(locator).sendKeys(text);
+            getElementAfterWait(locator).sendKeys(text);
             log.info("Text Typed '{}' into element: {}", text, locator);
         } catch (Exception e) {
             log.error("Unable to type form element: {}. with Exception: {}", locator, e.getMessage());
@@ -61,8 +60,7 @@ public class ActionBot {
 
     public void submit(By locator) {
         try {
-            waitForElement(locator);
-            driver.findElement(locator).submit();
+            getElementAfterWait(locator).submit();
             log.info("Submitted form element: {}", locator);
         } catch (Exception e) {
             log.error("Unable to submit form element: {}. with Exception: {}", locator, e.getMessage());
@@ -71,8 +69,7 @@ public class ActionBot {
 
     public void click(By locator) {
         try {
-            waitForElement(locator);
-            driver.findElement(locator).click();
+            getElementAfterWait(locator).click();
             log.info("Clicked element: {}", locator);
         } catch (Exception e) {
             log.error("Unable to click element: {}. with Exception: {}", locator, e.getMessage());
@@ -81,8 +78,7 @@ public class ActionBot {
 
     public String getText(By locator) {
         try {
-            waitForElement(locator);
-            String text= this.driver.findElement(locator).getText();
+            String text = getElementAfterWait(locator).getText();
             log.info("Retrieved text '{}' from element: {}", text, locator);
             return text;
         } catch (Exception e) {
@@ -93,8 +89,7 @@ public class ActionBot {
 
     public boolean elementDisplayed(By locator) {
         try {
-            waitForElement(locator);
-            Boolean displayed= driver.findElement(locator).isDisplayed();
+            Boolean displayed = getElementAfterWait(locator).isDisplayed();
             log.info("Element displayed status for {}: {}", locator, displayed);
             return displayed;
         } catch (Exception e) {
@@ -114,11 +109,8 @@ public class ActionBot {
     private Wait<WebDriver> createFluentWait(WebDriver driver, int timeoutSeconds, int pollingMillis) {
         return new FluentWait<>(driver).withTimeout(Duration.ofSeconds(timeoutSeconds)).pollingEvery(Duration.ofMillis(pollingMillis)).ignoring(NotFoundException.class).ignoring(ElementNotInteractableException.class).ignoring(StaleElementReferenceException.class).ignoring(AssertionError.class);
     }
-    private void waitForElement(By locator){
-        this.wait.until(d -> {
-            this.driver.findElement(locator);
-            return true;
-        });
-    }
 
+    private WebElement getElementAfterWait(By locator) {
+        return this.wait.until(driver -> this.driver.findElement(locator));
+    }
 }
