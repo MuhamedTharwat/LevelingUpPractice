@@ -1,4 +1,4 @@
-package testPackage;
+package testPackage.linearApproach;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -6,7 +6,7 @@ import org.testng.Assert;
 import org.testng.annotations.*;
 import utils.actions.ActionBot;
 
-public class Poc {
+public class PoC1 {
     WebDriver driver;
     ActionBot bot;
     By imgElement = By.xpath("//img[@alt='Google']");
