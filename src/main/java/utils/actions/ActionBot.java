@@ -20,8 +20,13 @@ public class ActionBot {
     private Wait<WebDriver> wait;
 
     public ActionBot(WebDriver driver) {
-        this.driver = driver;
-        this.wait = createFluentWait(this.driver, 5, 1000);
+        try {
+            this.driver = driver;
+            this.wait = createFluentWait(this.driver, 5, 500);
+        } catch (Exception e) {
+            log.error("Failed to initialize ActionBot. Exception: {}", e.getMessage());
+        }
+
     }
 
     public void initializeDriver(String browser) {
