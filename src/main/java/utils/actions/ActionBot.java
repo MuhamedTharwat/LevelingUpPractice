@@ -12,6 +12,7 @@ import org.testng.Assert;
 
 import java.time.Duration;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
 
 public class ActionBot {
     private final static Logger log = LogManager.getLogger(ActionBot.class);
@@ -54,7 +55,11 @@ public class ActionBot {
 
 
     public String getPageTitle() {
-        return this.driver.getTitle();
+        return executeWithWait(driver1 -> {
+            String title=this.driver.getTitle();
+            log.info("page title to URL: {}", title);
+            return title;
+        },"Unable to retrieve page title.");
     }
 
     public void navigate(String url) {
@@ -63,52 +68,43 @@ public class ActionBot {
     }
 
     public void type(By locator, String text) {
-        try {
-            getElementAfterWait(locator).sendKeys(text);
+        executeWithWait(driver1 -> {
+            driver.findElement(locator).sendKeys(text);
             log.info("Text Typed '{}' into element: {}", text, locator);
-        } catch (Exception e) {
-            log.error("Unable to type form element: {}. with Exception: {}", locator, e.getMessage());
-        }
+            return true;
+        },"Unable to type form element: "+locator);
     }
 
     public void submit(By locator) {
-        try {
-            getElementAfterWait(locator).submit();
+        executeWithWait(driver1 -> {
+            driver.findElement(locator).submit();
             log.info("Submitted form element: {}", locator);
-        } catch (Exception e) {
-            log.error("Unable to submit form element: {}. with Exception: {}", locator, e.getMessage());
-        }
+            return true;
+        },"Unable to submit form element: "+locator);
     }
 
     public void click(By locator) {
-        try {
-            getElementAfterWait(locator).click();
+        executeWithWait(driver1 -> {
+            this.driver.findElement(locator).click();
             log.info("Clicked element: {}", locator);
-        } catch (Exception e) {
-            log.error("Unable to click element: {}. with Exception: {}", locator, e.getMessage());
-        }
+            return true;
+        },"Unable to click element: "+locator);
     }
 
     public String getText(By locator) {
-        try {
-            String text = getElementAfterWait(locator).getText();
+        return executeWithWait(driver1 -> {
+            String text = this.driver.findElement(locator).getText();
             log.info("Retrieved text '{}' from element: {}", text, locator);
             return text;
-        } catch (Exception e) {
-            log.error("Unable to retrieve text from element: {}. with Exception: {}", locator, e.getMessage());
-            return "";
-        }
+        },"Unable to retrieve text from element: " + locator);
     }
 
     public boolean elementDisplayed(By locator) {
-        try {
-            Boolean displayed = getElementAfterWait(locator).isDisplayed();
+        return Boolean.TRUE.equals(executeWithWait(driver -> {
+            boolean displayed = this.driver.findElement(locator).isDisplayed();
             log.info("Element displayed status for {}: {}", locator, displayed);
             return displayed;
-        } catch (Exception e) {
-            log.error("Element not displayed: {}. Exception: {}", locator, e.getMessage());
-            return false;
-        }
+        }, "Element not displayed: " + locator));
     }
 
     public void closeDriver() {
@@ -184,11 +180,46 @@ public class ActionBot {
 
     }
 
+    /**
+     * Creates a FluentWait instance for the specified WebDriver with the given timeout and polling interval.
+     *
+     * @param driver the WebDriver instance
+     * @param timeoutSeconds the maximum time to wait
+     * @param pollingMillis the interval between polling
+     * @return a FluentWait instance
+     */
     private Wait<WebDriver> createFluentWait(WebDriver driver, int timeoutSeconds, int pollingMillis) {
         return new FluentWait<>(driver).withTimeout(Duration.ofSeconds(timeoutSeconds)).pollingEvery(Duration.ofMillis(pollingMillis)).ignoring(NotFoundException.class).ignoring(ElementNotInteractableException.class).ignoring(StaleElementReferenceException.class).ignoring(AssertionError.class);
     }
 
     private WebElement getElementAfterWait(By locator) {
         return this.wait.until(driver -> this.driver.findElement(locator));
+    }
+    /**
+     * Executes an driverTFunction on WebDriver with a FluentWait, retrying if necessary.
+     *
+     * @param driverTFunction the driverTFunction to perform by the WebDriver
+     * @param errorMessage the error message to log if the driverTFunction fails
+     * @param <T> the type of the result
+     * @return the driverTFunction
+     */
+    private <T> T executeWithWait(Function<WebDriver, T> driverTFunction, String errorMessage) {
+        AtomicBoolean exceptionLogged = new AtomicBoolean(false);
+        try {
+            return wait.until(driver -> {
+                try {
+                    return driverTFunction.apply(driver);
+                } catch (Exception e) {
+                    if (!exceptionLogged.get()) {
+                        log.error("{} Exception: {}", errorMessage, e.getMessage());
+                        exceptionLogged.set(true);
+                    }
+                    throw e;
+                }
+            });
+        } catch (TimeoutException e) {
+            log.error("Timed out Reached ! .... Still {}", errorMessage);
+            return null;
+        }
     }
 }
