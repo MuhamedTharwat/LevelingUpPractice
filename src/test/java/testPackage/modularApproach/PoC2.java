@@ -1,27 +1,13 @@
 package testPackage.modularApproach;
 
-import org.openqa.selenium.WebDriver;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import pages.com.google.LandingPage;
 import pages.com.google.SearchPage;
-import utils.actions.ActionBot;
-import utils.drivers.DriverManager;
+import testPackage.base.AbstractTest;
 
-public class PoC2 {
-    WebDriver driver;
-    ActionBot bot;
+public class PoC2 extends AbstractTest {
     LandingPage landingPage;
     SearchPage searchPage;
-
-    @BeforeMethod
-    public void setUp() {
-        DriverManager.initializeBrowser("edge");
-        DriverManager.navigate("https://www.google.com/ncr");
-        this.driver=DriverManager.getDriver();
-        this.bot = new ActionBot(driver);
-    }
 
     @Test(description = "verify landing page title")
     public void tc01() {
@@ -42,13 +28,10 @@ public class PoC2 {
     @Test(description = "verify fourth search result")
     public void tc03() {
         landingPage = new LandingPage(driver);
-        searchPage = landingPage.submitSearch("testng");
+        landingPage.submitSearch("testng");
+        searchPage = new SearchPage(driver);
         String fourthResult = searchPage.getSearchResultHeadline(5);
         bot.assertEquals(fourthResult, "org.testng");
     }
 
-    @AfterMethod
-    public void tearDown() {
-        DriverManager.closeBrowser();
-    }
 }

@@ -1,18 +1,16 @@
 package pages.com.google;
 
+import Base.AbstractPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import utils.actions.ActionBot;
 
-public class LandingPage {
-    private final WebDriver driver;
-    private final ActionBot bot;
+public class LandingPage extends AbstractPage {
     private final By imgElement = By.xpath("//img[@alt='Google']");
     private final By searchTxtBox = By.name("q");
 
     public LandingPage(WebDriver driver) {
-        this.driver = driver;
-        bot = new ActionBot(this.driver);
+        super(driver);
     }
 
     public String getLandingPageTitle() {
@@ -23,10 +21,9 @@ public class LandingPage {
         return bot.elementDisplayed(imgElement);
     }
 
-    public SearchPage submitSearch(String value) {
+    public void submitSearch(String value) {
         bot.type(searchTxtBox, value);
         bot.submit(searchTxtBox);
-        return new SearchPage(this.driver);
     }
 
 

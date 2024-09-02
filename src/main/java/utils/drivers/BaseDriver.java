@@ -9,13 +9,14 @@ import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
-public class DriverManager {
-    private final static Logger log = LogManager.getLogger(DriverManager.class);
+
+public class BaseDriver {
+    private final static Logger log = LogManager.getLogger(BaseDriver.class);
     private static WebDriver driver;
 
     public static void initializeBrowser(String browser) {
         try {
-            if (driver==null) {
+            if (driver == null) {
                 switch (browser.toLowerCase()) {
                     case "chrome":
                         driver = new ChromeDriver();
@@ -34,6 +35,7 @@ public class DriverManager {
             log.error("Failed to initialize {} browser. with Exception: {}", browser, e.getMessage());
         }
     }
+
     public static void navigate(String url) {
         try {
             driver.navigate().to(url);
@@ -44,11 +46,12 @@ public class DriverManager {
     }
 
     public static WebDriver getDriver() {
-        if (driver==null){
+        if (driver == null) {
             log.error("WebDriver has not been initialized. Ensure to call initializeBrowser() before accessing the driver.");
         }
         return driver;
     }
+
     public static void closeBrowser() {
         try {
             if (driver != null) {
