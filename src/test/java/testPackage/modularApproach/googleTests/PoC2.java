@@ -1,8 +1,8 @@
-package testPackage.modularApproach;
+package testPackage.modularApproach.googleTests;
 
 import org.testng.annotations.Test;
-import pages.com.google.LandingPage;
-import pages.com.google.SearchPage;
+import pages.pom.com.google.LandingPage;
+import pages.pom.com.google.SearchPage;
 import testPackage.base.AbstractTest;
 
 public class PoC2 extends AbstractTest {

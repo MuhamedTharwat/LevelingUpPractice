@@ -98,6 +98,14 @@ public class ActionBot {
             return text;
         },"Unable to retrieve text from element: " + locator);
     }
+    public String getElementAttribute(By locator,String attribute) {
+        return executeWithWait(driver1 -> {
+            String value = this.driver.findElement(locator).getAttribute(attribute.toLowerCase());
+            log.info("Retrieved attribute value '{}' from element: {}", value, locator);
+            return value;
+        },"Unable to retrieve attribute value from element: " + locator);
+    }
+
 
     public boolean elementDisplayed(By locator) {
         return Boolean.TRUE.equals(executeWithWait(driver -> {

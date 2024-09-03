@@ -1,9 +1,8 @@
-package pages.com.google;
+package pages.pom.com.google;
 
 import Base.AbstractPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import utils.actions.ActionBot;
 
 public class SearchPage extends AbstractPage {
 
