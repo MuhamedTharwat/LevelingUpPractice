@@ -10,7 +10,7 @@ public class PoC2 extends AbstractTest {
     SearchPage searchPage;
 
     @Test(description = "verify landing page title")
-    public void tc01() {
+    public void task01() {
         landingPage = new LandingPage(driver);
         String pageTitle = landingPage.getLandingPageTitle();
         bot.assertEquals(pageTitle, "Google");
@@ -18,7 +18,7 @@ public class PoC2 extends AbstractTest {
     }
 
     @Test(description = "verify landing page logo exist")
-    public void tc02() {
+    public void task02() {
         landingPage = new LandingPage(driver);
         Boolean result = landingPage.checkLogo();
         bot.assertTrue(result);
@@ -26,7 +26,7 @@ public class PoC2 extends AbstractTest {
     }
 
     @Test(description = "verify fourth search result")
-    public void tc03() {
+    public void task03() {
         landingPage = new LandingPage(driver);
         landingPage.submitSearch("testng");
         searchPage = new SearchPage(driver);

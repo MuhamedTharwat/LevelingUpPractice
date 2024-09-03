@@ -9,7 +9,7 @@ public class PoC3 extends AbstractTest {
     HomePage homePage;
     SearchPage searchPage;
     @Test
-    public void tc05(){
+    public void task05(){
         homePage=new HomePage(driver);
         homePage.search("Cucumber IO");
         searchPage=new SearchPage(driver);
