@@ -12,8 +12,8 @@ public class AbstractTest extends BaseDriver {
 
     @BeforeMethod
     public void setUp() {
-        BaseDriver.initializeBrowser("edge");
-        BaseDriver.navigate("https://duckduckgo.com/");
+        BaseDriver.initializeBrowser();
+        BaseDriver.navigate();
         this.driver = BaseDriver.getDriver();
         this.bot = new ActionBot(driver);
     }

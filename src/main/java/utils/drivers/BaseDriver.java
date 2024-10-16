@@ -9,12 +9,15 @@ import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import utils.configurations.ConfigManager;
 
 public class BaseDriver {
     private final static Logger log = LogManager.getLogger(BaseDriver.class);
+    private static final ConfigManager env = new ConfigManager("src/main/resources/env.properties");
     private static WebDriver driver;
 
-    public static void initializeBrowser(String browser) {
+    public static void initializeBrowser() {
+        String browser = env.getProperty("browser", "chrome");
         try {
             if (driver == null) {
                 switch (browser.toLowerCase()) {
@@ -36,7 +39,8 @@ public class BaseDriver {
         }
     }
 
-    public static void navigate(String url) {
+    public static void navigate() {
+        String url = env.getProperty("url");
         try {
             driver.navigate().to(url);
             log.info("Navigated to URL: {}", url);
